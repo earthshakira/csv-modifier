@@ -19,5 +19,5 @@ class CSVFile(Base):
 class CSVRow(Base):
     name = models.CharField(max_length=155)
     age = models.IntegerField(validators=[MinValueValidator(18)])
-    sex = models.CharField(choices=SEX_CHOICES)
+    sex = models.CharField(choices=SEX_CHOICES, max_length=1)
     file = models.ForeignKey(to=CSVFile, on_delete=models.CASCADE)
