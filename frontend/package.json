@@ -1,0 +1,54 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@blueprintjs/core": "^4.3.0",
+    "@blueprintjs/popover2": "^1.2.1",
+    "@blueprintjs/table": "^4.2.0",
+    "@reduxjs/toolkit": "^1.8.1",
+    "@tanstack/react-table": "^8.0.0-alpha.67",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.0",
+    "@types/node": "^16.11.33",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "@types/react-table": "^7.7.11",
+    "react": "^18.1.0",
+    "react-data-table-component": "^7.5.1",
+    "react-dom": "^18.1.0",
+    "react-papaparse": "^4.0.2",
+    "react-redux": "^8.0.1",
+    "react-scripts": "5.0.1",
+    "react-table": "^7.7.0",
+    "styled-components": "^5.3.5",
+    "typescript": "^4.6.4",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
