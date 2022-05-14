@@ -24,6 +24,7 @@ router.register(r'rows', csv_handler.views.RowViewSet)
 router.register(r'files', csv_handler.views.FileViewSet)
 
 urlpatterns = [
+    path('api/bulk', csv_handler.views.RowsListUpdate.as_view()),
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
