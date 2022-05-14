@@ -22,7 +22,8 @@ import csv_handler.views
 router = routers.DefaultRouter()
 router.register(r'rows', csv_handler.views.RowViewSet)
 router.register(r'files', csv_handler.views.FileViewSet)
+
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
 ]
