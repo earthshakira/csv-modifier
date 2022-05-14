@@ -13,7 +13,7 @@ class Base(models.Model):
 
 
 class CSVFile(Base):
-    name = models.CharField(max_length=155)
+    name = models.CharField(max_length=155, unique=True)
 
     def __str__(self):
         return f'{self.name}'
