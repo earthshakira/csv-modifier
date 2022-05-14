@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework import routers
 
+import csv_handler.views
+
+router = routers.DefaultRouter()
+router.register(r'rows', csv_handler.views.RowViewSet)
+router.register(r'files', csv_handler.views.FileViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
