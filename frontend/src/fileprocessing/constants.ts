@@ -45,4 +45,7 @@ export type Person = {
     age: AgeField,
     sex: SexField,
     file: string,
+    dbId?: number,
+    stale?: boolean,
+    error?: boolean,
 }

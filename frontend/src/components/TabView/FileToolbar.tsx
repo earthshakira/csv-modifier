@@ -1,8 +1,11 @@
 import {connect} from "react-redux";
-import {Button, ButtonGroup, Classes, Divider, H5, Intent} from "@blueprintjs/core";
+import {Button, ButtonGroup, DialogStep, H5, Intent, MultistepDialog} from "@blueprintjs/core";
+import {useState} from "react";
+import UploadConfirmation from "../UploadFlow/UploadConfirmation";
 
 function mapStateToProps(state: any, ownProps: any) {
     let {updatesReducer: {updateStats, errorStats}} = state;
+
     let {filename} = ownProps;
     return {
         errors: errorStats[filename],
@@ -11,7 +14,17 @@ function mapStateToProps(state: any, ownProps: any) {
 }
 
 function FileToolbar(props: any) {
-    let {updates, errors, deletes} = props
+    const {updates, errors, deletes, filename} = props
+    const [state, setState] = useState({
+        dialogIsOpen: false
+    })
+
+    const openDialog = function () {
+        setState({dialogIsOpen: true})
+    }
+    const handleClose = function () {
+
+    }
     return (
         <div>
             <ButtonGroup>
@@ -22,9 +35,25 @@ function FileToolbar(props: any) {
                 <Button icon={'trash'} disabled={!deletes}> Deleted </Button>
             </ButtonGroup>
             <ButtonGroup style={{float: 'right'}}>
-                <Button intent={Intent.PRIMARY} disabled={!updates} icon={'cloud-upload'}> Upload Changes</Button>
+                <Button intent={Intent.PRIMARY}
+                        icon={'cloud-upload'}
+                        disabled={!updates}
+                        onClick={openDialog}
+                > Upload Changes</Button>
                 <Button icon={'cloud-download'}> Sync </Button>
             </ButtonGroup>
+            <MultistepDialog
+                isOpen={state.dialogIsOpen}
+                onClose={handleClose}
+                navigationPosition={'left'}
+            >
+                <DialogStep id={'confirmation'} title={"Confirmation"}
+                            panel={<UploadConfirmation filename={filename}/>}/>
+                <DialogStep id={'upload'} title={"Upload Records"}
+                            panel={<div> wassup 1</div>}/>
+                <DialogStep id={'acknowledge'} title={"Done"}
+                            panel={<div> wassup 1</div>}/>
+            </MultistepDialog>
         </div>
     )
 }

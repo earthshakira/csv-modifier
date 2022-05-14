@@ -16,6 +16,7 @@ export type FileUpdate = BaseUpdate & {
         field: string,
         value: any,
     }
+    dbId?: number
 }
 
 export type ErrorUpdate = BaseUpdate & {
@@ -24,6 +25,16 @@ export type ErrorUpdate = BaseUpdate & {
         status: number
     }
 }
+
+export type UpdateRequest = {
+    name?: string,
+    age?: number,
+    sex?: string,
+    file: string,
+    dbId?: number,
+    errors: number,
+}
+
 export type UpdatedFilesState = {
     updates: {
         [key: string]: any
@@ -37,10 +48,19 @@ export type UpdatedFilesState = {
     errorStats: {
         [key: string]: number
     },
+    updateRecords: {
+        [file: string]: {
+            [id: string]: UpdateRequest
+        }
+    },
 }
 
-function createId(file: string, id: string | number, field: string) {
+function createFieldId(file: string, id: string | number, field: string) {
     return JSON.stringify([file, id, field])
+}
+
+function createRecordId(file: string, id: string | number) {
+    return JSON.stringify([file, id])
 }
 
 export function newStatus(field: string, value: any) {
@@ -49,65 +69,91 @@ export function newStatus(field: string, value: any) {
     return FieldStatus.ERROR
 }
 
+function countErrors(person: Person) {
+    let errors = 0;
+    Object.values(columnNames).forEach((col: any) => {
+        // @ts-ignore
+        if (person[col]?.status)
+            errors += 1
+    })
+    return errors;
+}
+
 const slice = createSlice({
     name: 'updates',
     initialState: {
         updates: {},
         updateStats: {},
         errors: {},
-        errorStats: {}
+        errorStats: {},
+        updateRecords: {},
     } as UpdatedFilesState,
     reducers: {
         registerUpdate: (state, action) => {
             console.log('update started')
-            const {file, id, update, initial} = action.payload as FileUpdate;
-            const objKey = createId(file, id, update.field)
-            if (state.updates[objKey] == null)
+            const {file, id, update, initial, dbId} = action.payload as FileUpdate;
+            const fieldId = createFieldId(file, id, update.field)
+            if (state.updates[fieldId] == null)
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
-            state.updates[objKey] = update.value;
-            let hadError = state.errors[objKey];
-            state.errors[objKey] = newStatus(update.field, update.value)
-            if (hadError && !state.errors[objKey]) {
-                delete state.errors[objKey]
+            state.updates[fieldId] = update.value;
+            const hadError = state.errors[fieldId], hasError = newStatus(update.field, update.value);
+            state.errors[fieldId] = hasError
+            if (hadError && !hasError) {
+                delete state.errors[fieldId]
                 state.errorStats[file] -= 1;
+                state.updateRecords[file][id].errors -= 1
                 if (state.errorStats[file] == 0) {
                     delete state.errorStats[file];
                 }
             }
-            if (!hadError && state.errors[objKey]) {
+            if (!hadError && hasError) {
                 state.errorStats[file] = (state.errorStats[file] || 0) + 1
+                state.updateRecords[file][id].errors += 1
             }
             if (update.value === initial.value) {
                 state.updateStats[file] -= 1
                 if (!state.updateStats[file]) {
                     delete state.updateStats[file];
-                    delete state.updates[objKey];
+                    delete state.updates[fieldId];
                 }
+            }
+
+            if (state.updates[fieldId]) {
+                state.updateRecords[file][id] = update.value
             }
             console.log('update ended')
         },
         registerError: (state, action) => {
             const {file, id, error} = action.payload as ErrorUpdate;
-            const objKey = createId(file, id, error.field)
-            if (!(objKey in state.errors))
+            const fieldId = createFieldId(file, id, error.field)
+            if (!(fieldId in state.errors))
                 state.errorStats[file] = (state.errorStats[file] || 0) + 1
-            state.errors[objKey] = error.status;
+            state.errors[fieldId] = error.status;
         },
         initializeUpdates: (state, action) => {
             console.log('update init started')
             const {data, filename: file} = action.payload
+            if (!state.updateRecords[file])
+                state.updateRecords[file] = {}
             data.forEach((person: Person) => {
-                let objKey = createId(file, person.id, columnNames.NAME)
-                state.updates[objKey] = person.name.value;
+                let fieldId = createFieldId(file, person.id, columnNames.NAME)
+                state.updates[fieldId] = person.name.value;
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
 
-                objKey = createId(file, person.id, columnNames.AGE)
-                state.updates[objKey] = person.age.value;
+                fieldId = createFieldId(file, person.id, columnNames.AGE)
+                state.updates[fieldId] = person.age.value;
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
 
-                objKey = createId(file, person.id, columnNames.SEX)
-                state.updates[objKey] = person.sex.value;
+                fieldId = createFieldId(file, person.id, columnNames.SEX)
+                state.updates[fieldId] = person.sex.value;
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
+                state.updateRecords[file][person.id] = {
+                    file,
+                    sex: person.sex.value,
+                    age: person.age.value,
+                    name: person.name.value,
+                    errors: countErrors(person)
+                }
             })
             console.log('update init complete')
         }
@@ -115,11 +161,11 @@ const slice = createSlice({
 })
 
 export const createUpdateMapper = function (state: any, file: string, id: string, field: string) {
-    return state.updates[createId(file, id, field)]
+    return state.updates[createFieldId(file, id, field)]
 }
 
 export const createErrorStateMapper = function (state: any, file: string, id: string, field: string) {
-    return state.errors[createId(file, id, field)]
+    return state.errors[createFieldId(file, id, field)]
 }
 export const {initializeUpdates, registerUpdate, registerError} = slice.actions
 export const updatesReducer = slice.reducer;
