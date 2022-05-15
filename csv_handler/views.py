@@ -16,6 +16,8 @@ class FileViewSet(viewsets.ModelViewSet):
     queryset = CSVFile.objects.all().order_by('updated_at')
     serializer_class = FileModelSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name']
 
 
 class RowViewSet(viewsets.ModelViewSet):
