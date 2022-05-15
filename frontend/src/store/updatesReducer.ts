@@ -130,6 +130,9 @@ const slice = createSlice({
                 state.errorStats[file] = (state.errorStats[file] || 0) + 1
             state.errors[fieldId] = error.status;
         },
+        clearUpdates: (state, action) => {
+
+        },
         initializeUpdates: (state, action) => {
             console.log('update init started')
             const {data, filename: file} = action.payload
@@ -167,5 +170,5 @@ export const createUpdateMapper = function (state: any, file: string, id: string
 export const createErrorStateMapper = function (state: any, file: string, id: string, field: string) {
     return state.errors[createFieldId(file, id, field)]
 }
-export const {initializeUpdates, registerUpdate, registerError} = slice.actions
+export const {clearUpdates, initializeUpdates, registerUpdate, registerError} = slice.actions
 export const updatesReducer = slice.reducer;
