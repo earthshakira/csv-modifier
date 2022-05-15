@@ -1,9 +1,12 @@
+import exp from "constants";
+
 export const columnNames = {
     NAME: 'name',
     AGE: 'age',
     SEX: 'sex'
 }
 
+export const COLUMNS = Object.values(columnNames);
 export const MIN_WORKING_AGE = 18;
 export const VALID_MALE_VALUES = ['male', 'm']
 export const VALID_FEMALE_VALUES = ['female', 'f']

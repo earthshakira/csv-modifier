@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
+import {COLUMNS} from "../fileprocessing/constants";
 
 export type UploadedFile = {
     filename: string;
@@ -27,6 +28,7 @@ export const slice = createSlice({
                 state.fileNames.push(filename)
             }
             state.lastAddedFile = filename
+            console.log(data)
             state.files[filename] = {
                 filename,
                 data,
@@ -37,10 +39,25 @@ export const slice = createSlice({
             state.lastAddedFile = filename
         },
         updateFile: (state, action) => {
-            const update = action.payload;
-            const file = state.files[update.file]
-            const person = file.data.filter((d: any) => d.id === update.id)
-            person[0][update.update.field].value = update.update.value
+            const {filename, updatedRecords: {updates, deletes}} = action.payload;
+            const updateMap: { [id: string]: any } = {};
+            updates.forEach((update: any) => {
+                updateMap[update.localId] = update;
+            })
+            console.log(updateMap)
+            state.files[filename].data.filter((person: any) => {
+                const update = updateMap[person.id];
+                if(update) {
+                    person.dbId = update.dbId;
+                    COLUMNS.forEach((col: string) => {
+                        if (update[col]) {
+                            // person[col].value = update[col];
+                            person[col].value = update[col];
+                            delete person[col].state
+                        }
+                    })
+                }
+            })
         }
     },
 })

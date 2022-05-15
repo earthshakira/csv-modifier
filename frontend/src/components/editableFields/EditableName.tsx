@@ -3,12 +3,12 @@ import {columnNames, FieldStatus} from "../../fileprocessing/constants";
 import {newStatus, registerError, registerUpdate} from "../../store/updatesReducer";
 import {EditableText} from "@blueprintjs/core";
 import {connect} from "react-redux";
-import {buildError, buildStatePropMapper, buildUpdate} from "../../utils";
+import {buildError, buildStatePropMapper, buildUpdate, deletedStylingClass} from "../../utils";
 import {renderError} from "../utils";
 
 const COL_NAME = columnNames.NAME;
 const EditableName = (props: any) => {
-    const {initial, updated, error, dispatch} = props
+    const {initial, updated, error, deleted, dispatch} = props
     const name = (updated == '' ? updated : (updated || initial.value))
 
     useEffect(() => {
@@ -25,8 +25,10 @@ const EditableName = (props: any) => {
 
     return (
         <>
-            <EditableText value={name} onChange={updateValue}/>
-            {renderError(error, COL_NAME)}
+            <div className={deletedStylingClass(deleted)}>
+                <EditableText disabled={deleted} value={name} onChange={updateValue}/>
+                {deleted ? renderError(error, COL_NAME) : ""}
+            </div>
         </>
     )
 }

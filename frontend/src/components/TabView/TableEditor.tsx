@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, EditableText, HTMLSelect, Icon} from "@blueprintjs/core";
+import {Card, Icon} from "@blueprintjs/core";
 
 
 import DataTable from 'react-data-table-component';
@@ -10,6 +10,7 @@ import EditableName from "../editableFields/EditableName";
 import EditableSex from "../editableFields/EditableSex";
 import EditableAge from "../editableFields/EditableAge";
 import FileToolbar from "./FileToolbar";
+import DeleteButton from "../editableFields/DeleteButton";
 
 const customStyles = {
     headRow: {
@@ -51,33 +52,33 @@ const mapStateToProps = (state: any, ownProps: OwnProps) => ({
 })
 
 const TableEditor = (props: TableEditorProps) => {
-
+    console.log('table editor', props.file)
     const columns = [
         {
             name: 'Name',
             selector: (row: any) => row.name.value,
             cell: (row: any, index: number, column: any, id: string | number) => {
-                return <EditableName initial={row.name} id={row.id} file={props.fileName}/>
+                return <EditableName initial={row.name} id={row.id} dbId={row.dbId} file={props.fileName}/>
             }
         },
         {
             name: 'Age',
             selector: (row: any) => row.age.value,
             cell: (row: any, index: number, column: any, id: string | number) => {
-                return <EditableAge initial={row.age} id={row.id} file={props.fileName}/>
+                return <EditableAge initial={row.age} id={row.id} dbId={row.dbId} file={props.fileName}/>
             }
         },
         {
             name: 'Sex',
             selector: (row: any) => row.sex.value,
             cell: (row: any, index: number, column: any, id: string | number) => {
-                return <EditableSex initial={row.sex} id={row.id} file={props.fileName}/>
+                return <EditableSex initial={row.sex} id={row.id} dbId={row.dbId} file={props.fileName}/>
             }
         },
         {
             name: '',
             cell: (row: any, index: number, column: any, id: string | number) => {
-                return <div></div>
+                return <DeleteButton id={row.id} dbId={row.dbId} file={props.fileName} />
             }
         }
     ];

@@ -4,6 +4,7 @@ import {useState} from "react";
 import UploadConfirmation from "../UploadFlow/UploadConfirmation";
 import UploadRecords from "../UploadFlow/UploadRecords";
 import {clearUpdates} from "../../store/updatesReducer";
+import {updateFile} from "../../store/filesReducer";
 
 function mapStateToProps(state: any, ownProps: any) {
     let {updatesReducer: {updateStats, errorStats}} = state;
@@ -23,27 +24,30 @@ interface IState {
     initialStep?: number
 }
 
+const INITIAL_STATE: IState = {
+    dialogIsOpen: false,
+    awaitingUpload: true,
+    updatedRecords: [],
+    initialStep: 0,
+}
+
 function FileToolbar(props: any) {
     const {updates, errors, deletes, filename, dispatch} = props
-    const [state, setState] = useState({
-        dialogIsOpen: false,
-        awaitingUpload: true,
-        updatedRecords: [],
-        initialStep: 0,
-    } as IState)
+    const [state, setState] = useState(INITIAL_STATE)
     console.log('toolbarstate', state)
-    const { dialogIsOpen, awaitingUpload, initialStep} = state;
+    const {dialogIsOpen, awaitingUpload, initialStep, updatedRecords} = state;
     const openDialog = function () {
-        setState({...state,dialogIsOpen: true, awaitingUpload: true})
+        setState({...state, dialogIsOpen: true, awaitingUpload: true})
     }
     const handleClose = function () {
-        dispatch()
-        dispatch()
+        dispatch(clearUpdates({filename, updatedRecords}))
+        dispatch(updateFile({filename, updatedRecords}))
+        setState(INITIAL_STATE)
     }
 
     let uploadCompleted = (records: any[]) => {
         console.log('uploadComplete', records)
-        setState({...state,awaitingUpload: false, updatedRecords: records, initialStep: 1})
+        setState({...state, awaitingUpload: false, updatedRecords: records, initialStep: 1})
     }
     console.log('rendered FileToolbar')
     return (

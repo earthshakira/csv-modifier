@@ -37,37 +37,57 @@ function FetchFile(props: any) {
 }
 
 function BatchUpload(props: any) {
-    const {filename, file, onComplete, records} = props
-    const totalRecords = records.length || 1
+    const {filename, file, onComplete, records, deletes} = props
+    const totalRecords = records.length
+    const totalDeletes = deletes.length
     const [state, setState] = useState({
         progress: 0,
+        deleteProgress: 0,
     });
 
     useEffect(() => {
-        API.uploadRecords(file, records, async (progress: number) => {
-            setState({
-                progress,
+        console.log('useEffect', records, deletes)
+        Promise.all([
+            API.uploadRecords(file, records, async (progress: number) => {
+                setState({
+                    ...state,
+                    progress,
+                })
+            }),
+            API.deleteRecords(file, deletes, async (deleteProgress: number) => {
+                setState({
+                    ...state, deleteProgress,
+                })
             })
-        }).then((data) => {
-            onComplete(data);
+        ]).then((data) => {
+            const [updates, deletes] = data;
+            console.log('promise all', data)
+            onComplete({...updates, ...deletes});
         })
     }, [])
     console.log('component', state, props)
     return (
         <div>
-            <p>2. Uploading Records </p>
+            <p>2. </p>
+
+            <p> Uploading Records </p>
             <ProgressBar intent={Intent.PRIMARY} value={state.progress / totalRecords}/>
             <p style={{float: "right"}}>{state.progress} / {totalRecords} </p>
+            <br/>
+            <p> Deleting Records </p>
+            <ProgressBar intent={Intent.DANGER} value={state.deleteProgress / totalDeletes }/>
+            <p style={{float: "right"}}>{state.deleteProgress} / {totalDeletes} </p>
             <br/>
         </div>
     )
 }
 
 function mapStateToProps(state: any, ownProps: any) {
-    let {updatesReducer: {updateRecords}} = state;
+    let {updatesReducer: {updateRecords, deleteRecords}} = state;
     let {filename} = ownProps;
     return {
-        records: updateRecords[filename]
+        records: updateRecords[filename],
+        deletes: deleteRecords[filename] || {}
     }
 }
 
@@ -78,14 +98,17 @@ function UploadRecords(props: any) {
     })
     const {step, file} = state;
     const {
-        records, filename, uploadDone,
-        onUploadCompleted
+        records, deletes, filename,
+        uploadDone,
+        onUploadCompleted,
     } = props
-    const valid_records = Object.values(records).filter((d: any) => d.errors == 0)
+    console.log('records', records)
+    const valid_records = Object.values(records).filter((d: any) => !d.errors && !deletes[d.localId])
+    const delete_records = Object.values(deletes).filter((d: any) => d.dbId)
     const onFileFetch = (file: any) => {
         setState({file, step: Math.min(1)})
     };
-    console.log()
+    console.log('validRecords', valid_records)
     console.log('rerendered', state, props)
     return (
         <div>
@@ -100,12 +123,13 @@ function UploadRecords(props: any) {
                         ) : ""}
                         {step >= 1 ? (
                             <BatchUpload filename={filename} file={file} records={valid_records}
+                                         deletes={delete_records}
                                          onComplete={onUploadCompleted}/>
                         ) : ""}
                     </>
                 ) : (
                     <div style={{textAlign: 'center'}}>
-                        <Icon intent={Intent.SUCCESS} icon={'tick-circle'} size={70} /> <br/>
+                        <Icon intent={Intent.SUCCESS} icon={'tick-circle'} size={70}/> <br/>
                         Your records are successfully added to the server
                     </div>
                 )}

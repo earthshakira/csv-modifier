@@ -3,7 +3,7 @@ import {columnNames, FieldStatus} from "../../fileprocessing/constants";
 import {newStatus, registerError, registerUpdate} from "../../store/updatesReducer";
 import {EditableText} from "@blueprintjs/core";
 import {connect} from "react-redux";
-import {buildError, buildStatePropMapper, buildUpdate} from "../../utils";
+import {buildError, buildStatePropMapper, buildUpdate, deletedStylingClass} from "../../utils";
 import {renderError} from "../utils";
 
 
@@ -14,7 +14,7 @@ const formattedAge = (age: any) => {
     return age
 }
 const EditableAge = (props: any) => {
-    const {initial, updated, error, dispatch} = props
+    const {initial, updated, deleted, error, dispatch} = props
     const age = (updated == '' ? updated : (updated || initial.value))
     useEffect(() => {
         if (newStatus(COL_AGE, formattedAge(age)) == FieldStatus.ERROR) {
@@ -31,8 +31,10 @@ const EditableAge = (props: any) => {
 
     return (
         <>
-            <EditableText value={age} type={'number'} onChange={updateValue}/>
-            {renderError(error, COL_AGE)}
+            <div className={deletedStylingClass(deleted)}>
+                <EditableText disabled={deleted} value={age} type={'number'} onChange={updateValue}/>
+                {renderError(error, COL_AGE)}
+            </div>
         </>
     )
 }

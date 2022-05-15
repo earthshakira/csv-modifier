@@ -3,14 +3,14 @@ import {columnNames, FieldStatus, Sex} from "../../fileprocessing/constants";
 import {newStatus, registerError, registerUpdate} from "../../store/updatesReducer";
 import {connect} from "react-redux";
 import {HTMLSelect} from "@blueprintjs/core";
-import {buildError, buildStatePropMapper, buildUpdate} from "../../utils";
+import {buildError, buildStatePropMapper, buildUpdate, deletedStyling} from "../../utils";
 import {renderError} from "../utils";
 
 
 const COL_SEX = columnNames.SEX
 
 const EditableSex = (props: any) => {
-    const {initial, updated, error, dispatch} = props
+    const {initial, updated, deleted, error, dispatch} = props
     const sex = updated || initial.value
 
     useEffect(() => {
@@ -30,6 +30,8 @@ const EditableSex = (props: any) => {
             <HTMLSelect
                 value={(error) ? '' : sex}
                 onChange={updateValue}
+                disabled={deleted}
+                style={deletedStyling(deleted)}
             >
                 <option disabled hidden value={''}>err!</option>
                 <option value={Sex.FEMALE}> Female</option>
@@ -37,7 +39,6 @@ const EditableSex = (props: any) => {
             </HTMLSelect>
             {renderError(error, COL_SEX)}
         </div>
-
     )
 }
 

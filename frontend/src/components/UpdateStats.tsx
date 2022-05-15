@@ -1,19 +1,25 @@
 import {connect} from "react-redux";
 import {Intent, Tag} from "@blueprintjs/core";
-import {plural} from "../utils";
+import {adj, plural} from "../utils";
 
 function mapStateToProps(state: any) {
     return {
         updates: state.updatesReducer.updateStats,
-        errors: state.updatesReducer.errorStats
+        errors: state.updatesReducer.errorStats,
+        deletes: state.updatesReducer.deletedStats
     }
 }
 
+function aggregateStats(stats: any) {
+    const files = Object.keys(stats).length;
+    const total = Object.values(stats).reduce((a, b) => Number(a) + Number(b), 0)
+    return {files, total}
+}
+
 function UpdateStats(props: any) {
-    const filesChanged = Object.keys(props.updates).length
-    const updates = Object.values(props.updates).reduce((a, b) => Number(a) + Number(b), 0)
-    const filesErrored = Object.keys(props.errors).length
-    const errors = Object.values(props.errors).reduce((a, b) => Number(a) + Number(b), 0)
+    const {files: filesChanged, total: updates} = aggregateStats(props.updates)
+    const {files: filesErrored, total: errors} = aggregateStats(props.errors)
+    const {files: filesDeleted, total: deletes} = aggregateStats(props.deletes)
 
     return (
 
@@ -42,6 +48,15 @@ function UpdateStats(props: any) {
                             No Errors
                         </Tag>
                     )
+            }
+            &nbsp;&nbsp;&nbsp;
+            {
+                deletes ?
+                    (
+                        <Tag intent={Intent.WARNING} icon={'delete'}>
+                            {`${deletes} row${plural(errors)} ${adj(deletes)} deleted in ${filesDeleted} file${plural(filesDeleted)}`}
+                        </Tag>
+                    ) : ("")
             }
 
         </div>

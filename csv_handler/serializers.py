@@ -11,6 +11,34 @@ def fetch_field_or_none(d, field):
     return None
 
 
+def perform_bulk_updates(updates):
+    field_updates = {
+        "name": [],
+        "age": [],
+        "sex": []
+    }
+
+    update_results = {
+        "name": [],
+        "age": [],
+        "sex": []
+    }
+
+    for update in updates:
+        print(update)
+        if update.name:
+            field_updates['name'].append(update)
+        if update.age:
+            field_updates['age'].append(update)
+        if update.sex:
+            field_updates['sex'].append(update)
+
+    for key in update_results.keys():
+        update_results[key] = CSVRow.objects.bulk_update(
+            field_updates[key], [key])
+    return update_results
+
+
 class FileModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CSVFile
@@ -39,14 +67,8 @@ class RowInputSerializer(serializers.Serializer):
         print(instance, validated_data)
 
     def create(self, validated_data):
-        db_id = fetch_field_or_none(validated_data, 'dbId')
-        file_ref = fetch_field_or_none(validated_data, 'fileRef')
-        if db_id:
-            validated_data['id'] = db_id
-            del validated_data['dbId']
-        if file_ref:
-            validated_data['file'] = file_ref
-            del validated_data['fileRef']
+        if 'id' in validated_data:
+            validated_data['pk'] = validated_data['id']
         return CSVRow(**validated_data)
 
     def save(self, **kwargs):
@@ -57,14 +79,25 @@ class BulkRowSerializer(serializers.Serializer):
     updates = RowInputSerializer(many=True)
     deletes = RowInputSerializer(many=True)
 
+    def create(self, validated_data):
+        print('create called')
+        return validated_data
+
     def save(self, **kwargs):
         updates = self.validated_data['updates']
         deletes = self.validated_data['deletes']
         rs = RowInputSerializer(None, None)
-        writes = []
-        for update in updates:
-            writes.append(rs.create(update))
-        db_objects = CSVRow.objects.bulk_create(writes)
-        for update, db_object in zip(updates, db_objects):
-            update['id'] = db_object.id
+        db_updates = []
+        db_creates = []
+        create_indices = []
+        for index, update in enumerate(updates):
+            if 'id' in update:
+                db_updates.append(rs.create(update))
+            else:
+                db_creates.append(rs.create(update))
+                create_indices.append(index)
+        db_created = CSVRow.objects.bulk_create(db_creates)
+        perform_bulk_updates(db_updates)
+        for index, db_object in zip(create_indices, db_created):
+            updates[index]['id'] = db_object.id
         return self.validated_data
