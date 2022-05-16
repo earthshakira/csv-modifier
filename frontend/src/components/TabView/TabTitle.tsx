@@ -32,7 +32,8 @@ function TabTitle(props: any) {
     }
 
     const buttonClass = `${Classes.MINIMAL} no-focus`
-    const closeTab = () => {
+    const closeTab = (e: any) => {
+        e.stopPropagation();
         dispatch(removeFile({filename}))
         dispatch(discardUpdates({filename}))
     };

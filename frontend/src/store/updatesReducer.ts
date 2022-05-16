@@ -108,6 +108,9 @@ const slice = createSlice({
             console.log('update started')
             const {file, id, update, initial, dbId} = action.payload as FileUpdate;
             const fieldId = createFieldId(file, id, update.field)
+            if (!state.updateRecords[file]) {
+                state.updateRecords[file] = {}
+            }
             if (state.updates[fieldId] == null && initial.value != null) {
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
             }
@@ -210,7 +213,7 @@ const slice = createSlice({
         discardUpdates: (state, action) => {
             const {filename: file} = action.payload
             const {updateStats, updates, updateRecords} = state;
-            Object.values(updateRecords[file]).forEach(person => {
+            Object.values(updateRecords[file] || {}).forEach(person => {
                 COLUMNS.forEach((col: string) => {
                     let fieldId = createFieldId(file, person.localId, col)
                     delete updates[fieldId]

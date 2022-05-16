@@ -23,6 +23,7 @@ type TableViewProps = {
 
 function TableView(props: TableViewProps) {
     const {files, activeFile, dispatch} = props;
+    console.log('TableView', props)
     const handleTabChange = (activeTabId: TabId) => dispatch(setActiveFile({filename: activeTabId}));
     if (!files.length)
         return (
@@ -47,7 +48,7 @@ function TableView(props: TableViewProps) {
                     id="CSVEditorTabs"
                     renderActiveTabPanelOnly={true}
                     large={true}
-                    selectedTabId={props.activeFile}
+                    selectedTabId={activeFile}
                     onChange={handleTabChange}
                 >
                     {props.files.map((fileName) =>

@@ -10,6 +10,7 @@ import {
 } from "./constants";
 
 const validHeaders = new Set<string>(Object.values(columnNames))
+const alphaRegex = /^[a-zA-Z]+$/;
 
 function uid() {
     return (performance.now().toString(36) + Math.random().toString(36)).replace(/\./g, "");
@@ -59,7 +60,7 @@ const createHeaderMapping = (headers: any[]): ColIndex => {
 }
 
 const isValidAge = (str: any) => {
-    if (typeof str !== 'string' ) {
+    if (typeof str !== 'string') {
         return false;
     }
     const num = Number(str);
@@ -76,10 +77,18 @@ const isValidSex = (str: any) => {
     return VALID_SEX_VALUES.includes(str.toLowerCase())
 }
 
+const isValidName = (str: any) => {
+    if (typeof str !== 'string') {
+        return false;
+    }
+    console.log(str, str.match(alphaRegex))
+    return !!str.match(alphaRegex)
+
+}
 export const isFieldValid = {
-    [columnNames.NAME]: (name: any) => name && typeof name === "string" && name.length > 0,
+    [columnNames.NAME]: (name: any) => name && isValidName(name),
     [columnNames.AGE]: (age: any) => age && isValidAge(age),
-    [columnNames.SEX]: (age: any) => age && isValidSex(age),
+    [columnNames.SEX]: (sex: any) => sex && isValidSex(sex),
 }
 
 const formatField = {

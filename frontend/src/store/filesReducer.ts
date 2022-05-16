@@ -20,6 +20,7 @@ export const slice = createSlice({
         files: {},
         fileNames: [],
         activeFile: '',
+        fileRem: false,
     } as UploadedFilesState,
     reducers: {
         addFile: (state, action) => {
@@ -35,6 +36,7 @@ export const slice = createSlice({
             }
         },
         setActiveFile: (state, action) => {
+            console.log('setActiveFile', action.payload)
             const {filename} = action.payload;
             state.activeFile = filename
         },
@@ -67,13 +69,16 @@ export const slice = createSlice({
         removeFile: (state, action) => {
             const {filename} = action.payload
             const {files, fileNames} = state;
-            delete state.files[filename];
+            delete files[filename];
             let index = fileNames.indexOf(filename);
             if (index > -1) {
+                console.log(index)
                 fileNames.splice(index, 1)
                 if (index >= fileNames.length) {
                     index -= 1;
                 }
+                console.log(index)
+                state.fileNames = fileNames;
                 state.activeFile = fileNames[index] || '';
             }
         }

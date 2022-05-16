@@ -64,7 +64,7 @@ function BatchUpload(props: any) {
                     ...state, deleteProgress,
                 })
             }),
-            delay(1000)
+            delay(3000)
         ]).then((data) => {
             const [updates, deletes] = data;
             console.log('promise all', data)
@@ -101,7 +101,7 @@ function mapStateToProps(state: any, ownProps: any) {
     let {updatesReducer: {updateRecords, deleteRecords}} = state;
     let {filename} = ownProps;
     return {
-        records: updateRecords[filename],
+        records: updateRecords[filename] || {},
         deletes: deleteRecords[filename] || {}
     }
 }

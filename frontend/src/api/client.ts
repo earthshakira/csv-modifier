@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8000/api';
-const BATCH_SIZE = 1;
+const BATCH_SIZE = 100;
 
 const api = axios.create({
     baseURL: BASE_URL,

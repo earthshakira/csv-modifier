@@ -7,7 +7,7 @@ function mapStateToProps(state: any, ownProps: any) {
 
     let {filename} = ownProps;
     return {
-        records: updateRecords[filename],
+        records: updateRecords[filename] || {},
         deletes: deleteRecords[filename] || {}
     }
 }
