@@ -3,7 +3,7 @@ import {COLUMNS} from "../fileprocessing/constants";
 
 export type UploadedFile = {
     filename: string;
-    data: [any[]];
+    data: any[][];
 };
 
 export type UploadedFilesState = {
@@ -44,8 +44,12 @@ export const slice = createSlice({
             updates.forEach((update: any) => {
                 updateMap[update.localId] = update;
             })
-            console.log(updateMap)
-            state.files[filename].data.filter((person: any) => {
+            const deleteMap: { [id: string]: any } = {};
+            deletes.forEach((del: any) => {
+                deleteMap[del.localId] = del;
+            })
+            console.log('shubham', updateMap, deletes)
+            state.files[filename].data = state.files[filename].data.filter((person: any) => {
                 const update = updateMap[person.id];
                 if(update) {
                     person.dbId = update.dbId;
@@ -57,8 +61,9 @@ export const slice = createSlice({
                         }
                     })
                 }
+                return !deleteMap[person.id];
             })
-        }
+        },
     },
 })
 

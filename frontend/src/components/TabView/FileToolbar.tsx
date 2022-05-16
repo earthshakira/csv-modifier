@@ -3,16 +3,17 @@ import {Button, ButtonGroup, DialogStep, H5, Intent, MultistepDialog} from "@blu
 import {useState} from "react";
 import UploadConfirmation from "../UploadFlow/UploadConfirmation";
 import UploadRecords from "../UploadFlow/UploadRecords";
-import {clearUpdates} from "../../store/updatesReducer";
+import {clearDeletes, clearUpdates} from "../../store/updatesReducer";
 import {updateFile} from "../../store/filesReducer";
 
 function mapStateToProps(state: any, ownProps: any) {
-    let {updatesReducer: {updateStats, errorStats}} = state;
+    let {updatesReducer: {updateStats, errorStats, deletedStats}} = state;
 
     let {filename} = ownProps;
     return {
         errors: errorStats[filename],
-        updates: updateStats[filename]
+        updates: updateStats[filename],
+        deletes: deletedStats[filename]
     }
 }
 
@@ -41,6 +42,7 @@ function FileToolbar(props: any) {
     }
     const handleClose = function () {
         dispatch(clearUpdates({filename, updatedRecords}))
+        dispatch(clearDeletes({filename}))
         dispatch(updateFile({filename, updatedRecords}))
         setState(INITIAL_STATE)
     }
@@ -62,7 +64,7 @@ function FileToolbar(props: any) {
             <ButtonGroup style={{float: 'right'}}>
                 <Button intent={Intent.PRIMARY}
                         icon={'cloud-upload'}
-                        disabled={!updates}
+                        disabled={!updates && !deletes}
                         onClick={openDialog}
                 > Upload Changes</Button>
                 <Button icon={'cloud-download'}> Sync </Button>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8000/api';
-const BATCH_SIZE = 1;
+const BATCH_SIZE = 500;
 
 const api = axios.create({
     baseURL: BASE_URL,
@@ -86,7 +86,7 @@ async function deleteRecords(file: any, records: any, onProgress: (progress: num
         const currentBatch = deletes.slice(itr, itr + BATCH_SIZE);
         let response = await uploadBatch([], currentBatch)
         console.log('resp', response)
-        dbUpdates = dbUpdates.concat(response.updates)
+        dbUpdates = dbUpdates.concat(response.deletes)
         response.deletes.forEach((update: any, i: number) => {
             update.dbId = update.id
             update.localId = currentBatch[i].localId

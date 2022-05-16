@@ -1,4 +1,7 @@
+import random
+
 from django.core.validators import MinValueValidator
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
@@ -55,7 +58,6 @@ class RowModelSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('created_at', 'updated_at')
 
 
-#
 class RowInputSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(required=False, min_length=1, max_length=155)
@@ -71,9 +73,6 @@ class RowInputSerializer(serializers.Serializer):
             validated_data['pk'] = validated_data['id']
         return CSVRow(**validated_data)
 
-    def save(self, **kwargs):
-        raise NotImplementedError('Not Allowed')
-
 
 class BulkRowSerializer(serializers.Serializer):
     updates = RowInputSerializer(many=True)
@@ -86,6 +85,7 @@ class BulkRowSerializer(serializers.Serializer):
     def save(self, **kwargs):
         updates = self.validated_data['updates']
         deletes = self.validated_data['deletes']
+
         rs = RowInputSerializer(None, None)
         db_updates = []
         db_creates = []
@@ -96,8 +96,22 @@ class BulkRowSerializer(serializers.Serializer):
             else:
                 db_creates.append(rs.create(update))
                 create_indices.append(index)
-        db_created = CSVRow.objects.bulk_create(db_creates)
-        perform_bulk_updates(db_updates)
+
+        db_deletes = []
+        delete_id = random.getrandbits(60)
+        for deleteItem in deletes:
+            db_object = rs.create(deleteItem)
+            db_object.deletion_id = delete_id
+            db_deletes.append(db_object)
+
+        with transaction.atomic():
+            db_created = CSVRow.objects.bulk_create(db_creates)
+            perform_bulk_updates(db_updates)
+
+            if len(db_deletes):
+                CSVRow.objects.bulk_update(db_deletes, ['deletion_id'])
+                CSVRow.objects.filter(deletion_id=delete_id).delete()
+
         for index, db_object in zip(create_indices, db_created):
             updates[index]['id'] = db_object.id
         return self.validated_data

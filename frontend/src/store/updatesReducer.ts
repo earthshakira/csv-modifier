@@ -197,6 +197,16 @@ const slice = createSlice({
                 delete deleteRecords[file];
             }
         },
+        clearDeletes: (state, action) => {
+            const {filename: file} = action.payload
+            const {deleted, deletedStats, deleteRecords} = state;
+            Object.keys(deleteRecords[file] || {}).forEach((localId: string) => {
+                const recordId = createRecordId(file, localId);
+                delete deleted[recordId]
+            })
+            delete deletedStats[file];
+            delete deleteRecords[file];
+        },
         initializeUpdates: (state, action) => {
             console.log('update init started')
             const {data, filename: file} = action.payload
@@ -243,5 +253,13 @@ export const createErrorStateMapper = function (state: any, file: string, id: st
 export const createDeleteMapper = function (state: any, file: string, id: string) {
     return state.deleted[createRecordId(file, id)]
 }
-export const {clearUpdates, initializeUpdates, registerUpdate, registerError, restoreRow, deleteRow} = slice.actions
+export const {
+    clearUpdates,
+    initializeUpdates,
+    registerUpdate,
+    registerError,
+    restoreRow,
+    deleteRow,
+    clearDeletes
+} = slice.actions
 export const updatesReducer = slice.reducer;

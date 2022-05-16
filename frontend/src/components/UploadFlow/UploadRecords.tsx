@@ -3,6 +3,11 @@ import {Classes, H4, Icon, Intent, ProgressBar, Spinner, Tag} from "@blueprintjs
 import {useEffect, useState} from "react";
 import API from "../../api/client";
 
+function delay(t: number) {
+   return new Promise(function(resolve) {
+       setTimeout(resolve, t)
+   });
+}
 
 function FetchFile(props: any) {
     const {filename, onFetch, file} = props;
@@ -58,7 +63,8 @@ function BatchUpload(props: any) {
                 setState({
                     ...state, deleteProgress,
                 })
-            })
+            }),
+            delay(1000)
         ]).then((data) => {
             const [updates, deletes] = data;
             console.log('promise all', data)
@@ -69,15 +75,24 @@ function BatchUpload(props: any) {
     return (
         <div>
             <p>2. </p>
+            {totalRecords ? (
+                <>
+                    <p> Uploading Records </p>
+                    <ProgressBar intent={Intent.PRIMARY} value={state.progress / totalRecords}/>
+                    <p style={{float: "right"}}>{state.progress} / {totalRecords} </p>
+                    <br/>
+                </>
+            ) : ""}
 
-            <p> Uploading Records </p>
-            <ProgressBar intent={Intent.PRIMARY} value={state.progress / totalRecords}/>
-            <p style={{float: "right"}}>{state.progress} / {totalRecords} </p>
-            <br/>
-            <p> Deleting Records </p>
-            <ProgressBar intent={Intent.DANGER} value={state.deleteProgress / totalDeletes }/>
-            <p style={{float: "right"}}>{state.deleteProgress} / {totalDeletes} </p>
-            <br/>
+            {totalDeletes ? (
+                <>
+                    <p> Deleting Records </p>
+                    <ProgressBar intent={Intent.DANGER} value={state.deleteProgress / totalDeletes}/>
+                    <p style={{float: "right"}}>{state.deleteProgress} / {totalDeletes} </p>
+                    <br/>
+                </>
+            ) : ""}
+
         </div>
     )
 }

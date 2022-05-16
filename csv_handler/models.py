@@ -21,6 +21,7 @@ class CSVRow(models.Model):
     age = models.IntegerField(validators=[MinValueValidator(18)])
     sex = models.CharField(choices=SEX_CHOICES, max_length=1)
     file = models.ForeignKey(to=CSVFile, on_delete=models.CASCADE)
+    deletion_id = models.BigIntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
