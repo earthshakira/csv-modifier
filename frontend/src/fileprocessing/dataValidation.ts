@@ -1,6 +1,7 @@
 import {
-    columnNames,
+    columnNames, COLUMNS,
     FieldStatus,
+    MAX_AGE,
     MIN_WORKING_AGE,
     Person,
     Sex,
@@ -40,7 +41,7 @@ type ColIndex = { [field: string]: number };
 
 type ValidationMeta = {
     valid: boolean,
-    error?: Error,
+    error?: string,
     data?: Person[]
 }
 
@@ -64,7 +65,7 @@ const isValidAge = (str: any) => {
         return false;
     }
     const num = Number(str);
-    if (Number.isInteger(num) && num >= MIN_WORKING_AGE) {
+    if (Number.isInteger(num) && num >= MIN_WORKING_AGE && num < MAX_AGE) {
         return true;
     }
     return false;
@@ -161,7 +162,7 @@ export const validateData = (csv: [any[]], file: File): ValidationMeta => {
     if (!headersAreValid(headers)) {
         return {
             valid: false,
-            error: new InvalidHeadersError(`expected column names to be ${validHeaders}, got ${csv[0]}, matches are [case-insensitive] [order-insensitive]`),
+            error: `expected column names to be {${COLUMNS}}, got ${csv[0]}, matches are [case-insensitive] [order-insensitive]`,
         }
     }
     const data = csv.slice(1);

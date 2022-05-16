@@ -132,20 +132,23 @@ function CSVReader(props: any) {
                                 }))
                                 dispatch(addFile({data: dataValidation.data, filename: file.name}))
                                 dispatch(initializeUpdates({data: dataValidation.data, filename: file.name}))
+                            } else {
+                               dispatch(sendToast({
+                                message: dataValidation.error,
+                                intent: Intent.DANGER,
+                                icon: 'error'
+                            }))
                             }
                         }
                     }
                     closeButton.current?.click()
-                    setZoneHover(false);
                 }}
 
                 onDragOver={(event: DragEvent) => {
                     event.preventDefault();
-                    setZoneHover(true);
                 }}
                 onDragLeave={(event: DragEvent) => {
                     event.preventDefault();
-                    setZoneHover(false);
                 }}
             >
                 {({
@@ -160,8 +163,7 @@ function CSVReader(props: any) {
                             {...getRootProps()}
                             style={Object.assign(
                                 {},
-                                styles.zone,
-                                zoneHover && styles.zoneHover
+                                styles.zone
                             )}
                         >
                             {acceptedFile ? (
