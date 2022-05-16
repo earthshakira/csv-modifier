@@ -111,6 +111,10 @@ const slice = createSlice({
             if (!state.updateRecords[file]) {
                 state.updateRecords[file] = {}
             }
+            if (!state.updateRecords[file][id]) {
+                state.updateRecords[file][id] = {file: file, localId: id, errors: 0, [update.field]: update.value};
+            }
+
             if (state.updates[fieldId] == null && initial.value != null) {
                 state.updateStats[file] = (state.updateStats[file] || 0) + 1
             }
@@ -145,8 +149,6 @@ const slice = createSlice({
                     updateRecord = state.updateRecords[file][id] = {file, localId: id, errors: 0, dbId}
                 }
                 updateRecord[update.field] = update.value
-                if (!hadError && hasError)
-                    updateRecord.errors += 1;
                 console.log(updateRecord)
             }
             console.log('update ended')

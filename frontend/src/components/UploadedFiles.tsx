@@ -47,12 +47,6 @@ function UploadedFiles(props: any) {
     const handleOnClose = () => {
         dispatch(closeDialog({}))
     }
-    useEffect(() => {
-        API.getFiles(PAGE_SIZE, page * PAGE_SIZE).then((filesMeta: any) => {
-            dispatch(setFilesState({filesMeta}))
-            console.log('filesMeta', filesMeta)
-        })
-    }, [])
 
     const downloadFile = (file: any) => {
         handleOnClose()

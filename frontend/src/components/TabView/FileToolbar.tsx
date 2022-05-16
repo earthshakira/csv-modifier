@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import {Button, ButtonGroup, DialogStep, H5, Intent, MultistepDialog} from "@blueprintjs/core";
+import {Button, ButtonGroup, DialogStep, Intent, MultistepDialog} from "@blueprintjs/core";
 import {useState} from "react";
 import UploadConfirmation from "../UploadFlow/UploadConfirmation";
 import UploadRecords from "../UploadFlow/UploadRecords";
@@ -39,6 +39,9 @@ function FileToolbar(props: any) {
     const {dialogIsOpen, awaitingUpload, initialStep, updatedRecords} = state;
     const openDialog = function () {
         setState({...state, dialogIsOpen: true, awaitingUpload: true})
+    }
+    const closeModal = () => {
+        setState({...state, dialogIsOpen: false, awaitingUpload: false})
     }
     const handleClose = function () {
         dispatch(clearUpdates({filename, updatedRecords}))
@@ -83,7 +86,7 @@ function FileToolbar(props: any) {
                 initialStepIndex={initialStep}
             >
                 <DialogStep id={'confirmation'} title={"Confirmation"}
-                            panel={<UploadConfirmation filename={filename}/>}/>
+                            panel={<UploadConfirmation filename={filename} closeModal={closeModal}/>}/>
                 <DialogStep id={'upload'} title={"Upload Records"}
                             panel={<UploadRecords
                                 filename={filename}

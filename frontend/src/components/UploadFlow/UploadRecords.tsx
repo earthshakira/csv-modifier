@@ -64,7 +64,7 @@ function BatchUpload(props: any) {
                     ...state, deleteProgress,
                 })
             }),
-            delay(3000)
+            delay(2000)
         ]).then((data) => {
             const [updates, deletes] = data;
             console.log('promise all', data)

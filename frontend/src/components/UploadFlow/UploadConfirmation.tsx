@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import {Card, Classes, H4, Icon, Intent} from "@blueprintjs/core";
+import {Button, Card, Classes, H4, Icon, Intent} from "@blueprintjs/core";
 import {adj, plural} from "../../utils";
 
 function mapStateToProps(state: any, ownProps: any) {
@@ -12,8 +12,16 @@ function mapStateToProps(state: any, ownProps: any) {
     }
 }
 
+const boxStyle = {
+    width: "28%",
+    height: "13em",
+    textAlign: "center",
+    display: "inline-block",
+    marginLeft: "5%"
+} as any;
+
 function UploadConfirmation(props: any) {
-    const {records, filename, deletes} = props
+    const {records, filename, deletes, closeModal} = props
     console.log(props)
     const valid_records = Object.values(records).filter((d: any) => !d.errors && !deletes[d.localId]).length
     const deleteCount = Object.values(deletes).filter((d: any) => d.dbId).length
@@ -22,47 +30,50 @@ function UploadConfirmation(props: any) {
         <div>
             <div className={Classes.DIALOG_HEADER}>
                 <Icon icon={'document'} intent={Intent.PRIMARY} size={30}/> <H4> Confirm your updates </H4>
+                <Button icon={'cross'} minimal={true} onClick={closeModal}/>
             </div>
             <div className={Classes.DIALOG_BODY}>
-                {
-                    valid_records ? (
-                        <>
-                            <Card style={{width: "30%", textAlign: "center", display: "inline-block"}}>
-                                <Icon intent={Intent.SUCCESS} icon={'clean'} size={30}/>
-                                <br/><br/>
-                                <p>{`${valid_records} row${plural(valid_records)} ${adj(valid_records)} valid and will be uploaded`}</p>
-                            </Card>
-                        </>
-                    ) : ""
-                }
+                <div>
+                    {
+                        valid_records ? (
+                            <div style={boxStyle}>
+                                <Card>
+                                    <Icon intent={Intent.SUCCESS} icon={'clean'} size={30}/>
+                                    <br/><br/>
+                                    <p>{`${valid_records} row${plural(valid_records)} ${adj(valid_records)} valid and will be uploaded`}</p>
+                                </Card>
+                            </div>
+                        ) : ""
+                    }
 
-                {
-                    errors ? (
-                        <>
-                            <Card style={{width: "30%", textAlign: "center", display: "inline-block", marginLeft:"5%"}}>
-                                <Icon intent={Intent.DANGER} icon={'error'} size={30}/>
-                                <br/><br/>
-                                <p>{`${errors} row${plural(errors)} ${adj(errors)} invalid and will not be uploaded`}</p>
-                            </Card>
-                        </>
-                    ) : (
-                        ""
-                    )
-                }
+                    {
+                        errors ? (
+                            <div style={boxStyle}>
+                                <Card>
+                                    <Icon intent={Intent.DANGER} icon={'error'} size={30}/>
+                                    <br/><br/>
+                                    <p>{`${errors} row${plural(errors)} ${adj(errors)}, won't be uploaded`}</p>
+                                </Card>
+                            </div>
+                        ) : (
+                            <span/>
+                        )
+                    }
 
-                {
-                    deleteCount ? (
-                        <>
-                            <Card style={{width: "30%", textAlign: "center", display: "inline-block", marginLeft:"5%"}}>
-                                <Icon intent={Intent.WARNING} icon={'trash'} size={30}/>
-                                <br/><br/>
-                                <p>{`${deleteCount} row${plural(deleteCount)} will be deleted`}</p>
-                            </Card>
-                        </>
-                    ) : (
-                        ""
-                    )
-                }
+                    {
+                        deleteCount ? (
+                            <div style={boxStyle}>
+                                <Card>
+                                    <Icon intent={Intent.WARNING} icon={'trash'} size={30}/>
+                                    <br/><br/>
+                                    <p>{`${deleteCount} row${plural(deleteCount)} will be deleted`}</p>
+                                </Card>
+                            </div>
+                        ) : (
+                            ""
+                        )
+                    }
+                </div>
             </div>
         </div>
     )

@@ -7,7 +7,8 @@ import TableView from './components/TabView/TableView';
 import ToasterContainer from "./components/ToasterContainer";
 import {useDispatch} from "react-redux";
 import UploadedFiles from "./components/UploadedFiles";
-import {openDialog} from "./store/uploadsReducer";
+import {openDialog, setFilesState} from "./store/uploadsReducer";
+import API from "./api/client";
 
 
 export function App() {
@@ -22,6 +23,10 @@ export function App() {
                     <NavbarDivider/>
                     <Button className={Classes.MINIMAL} onClick={() => {
                         dispatch(openDialog({}))
+                        API.getFiles(1000, 0).then((filesMeta: any) => {
+                            dispatch(setFilesState({filesMeta}))
+                            console.log('filesMeta', filesMeta)
+                        })
                     }} icon="document-share" text="Uploaded Files"/>
                     <UploadedFiles/>
                 </NavbarGroup>
