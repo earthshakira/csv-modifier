@@ -1,0 +1,16 @@
+{
+  "name": "csv-file-upload",
+  "version": "1.0.0",
+  "description": "## Choices",
+  "main": "startup.sh",
+  "repository": {
+    "type": "git",
+    "url": "git+https://earthshakira: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@github.com/earthshakira/csv-modifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/earthshakira/csv-modifier/issues"
+  },
+  "homepage": "https://github.com/earthshakira/csv-modifier#readme"
+}
