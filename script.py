@@ -9,4 +9,3 @@ with open('/Users/shubham-smallcase/Downloads/name_gender.csv') as f:
         crow.append(str(randint(21, 75)))
         newCsv += ",".join(crow)
         newCsv += "\n"
-    print(newCsv)

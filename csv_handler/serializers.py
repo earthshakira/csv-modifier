@@ -28,7 +28,6 @@ def perform_bulk_updates(updates):
     }
 
     for update in updates:
-        print(update)
         if update.name:
             field_updates['name'].append(update)
         if update.age:
@@ -65,9 +64,6 @@ class RowInputSerializer(serializers.Serializer):
     sex = serializers.CharField(required=False, min_length=1, max_length=1)
     file = PrimaryKeyRelatedField(queryset=CSVFile.objects.all())
 
-    def update(self, instance, validated_data):
-        print(instance, validated_data)
-
     def create(self, validated_data):
         if 'id' in validated_data:
             validated_data['pk'] = validated_data['id']
@@ -79,7 +75,6 @@ class BulkRowSerializer(serializers.Serializer):
     deletes = RowInputSerializer(many=True)
 
     def create(self, validated_data):
-        print('create called')
         return validated_data
 
     def save(self, **kwargs):
