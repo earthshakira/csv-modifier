@@ -29,14 +29,13 @@ export const slice = createSlice({
                 state.fileNames.push(filename)
             }
             state.activeFile = filename
-            console.log(data)
+
             state.files[filename] = {
                 filename,
                 data,
             }
         },
         setActiveFile: (state, action) => {
-            console.log('setActiveFile', action.payload)
             const {filename} = action.payload;
             state.activeFile = filename
         },
@@ -50,7 +49,7 @@ export const slice = createSlice({
             deletes.forEach((del: any) => {
                 deleteMap[del.localId] = del;
             })
-            console.log('shubham', updateMap, deletes)
+
             state.files[filename].data = state.files[filename].data.filter((person: any) => {
                 const update = updateMap[person.id];
                 if (update) {
@@ -72,12 +71,10 @@ export const slice = createSlice({
             delete files[filename];
             let index = fileNames.indexOf(filename);
             if (index > -1) {
-                console.log(index)
                 fileNames.splice(index, 1)
                 if (index >= fileNames.length) {
                     index -= 1;
                 }
-                console.log(index)
                 state.fileNames = fileNames;
                 state.activeFile = fileNames[index] || '';
             }

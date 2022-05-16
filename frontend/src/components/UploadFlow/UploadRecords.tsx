@@ -2,20 +2,22 @@ import {connect} from "react-redux";
 import {Classes, H4, Icon, Intent, ProgressBar, Spinner, Tag} from "@blueprintjs/core";
 import {useEffect, useState} from "react";
 import API from "../../api/client";
+import {sendToast} from "../../store/toastReducer";
+import {SERVER_ERROR} from "../../utils";
 
 function delay(t: number) {
-   return new Promise(function(resolve) {
-       setTimeout(resolve, t)
-   });
+    return new Promise(function (resolve) {
+        setTimeout(resolve, t)
+    });
 }
 
 function FetchFile(props: any) {
-    const {filename, onFetch, file} = props;
+    const {filename, onFetch, file, dispatch} = props;
     if (!file)
         API.createIfNotExists(filename).then(
             (d) => onFetch(d)
         ).catch(err => {
-            console.error(err)
+            dispatch(sendToast(SERVER_ERROR));
         })
     return (
         <div>
@@ -42,7 +44,7 @@ function FetchFile(props: any) {
 }
 
 function BatchUpload(props: any) {
-    const {filename, file, onComplete, records, deletes} = props
+    const {filename, file, onComplete, records, deletes, dispatch} = props
     const totalRecords = records.length
     const totalDeletes = deletes.length
     const [state, setState] = useState({
@@ -51,7 +53,6 @@ function BatchUpload(props: any) {
     });
 
     useEffect(() => {
-        console.log('useEffect', records, deletes)
         Promise.all([
             API.uploadRecords(file, records, async (progress: number) => {
                 setState({
@@ -67,11 +68,11 @@ function BatchUpload(props: any) {
             delay(2000)
         ]).then((data) => {
             const [updates, deletes] = data;
-            console.log('promise all', data)
             onComplete({...updates, ...deletes});
+        }).catch((err) => {
+            dispatch(sendToast(SERVER_ERROR))
         })
     }, [])
-    console.log('component', state, props)
     return (
         <div>
             <p>2. </p>
@@ -116,15 +117,13 @@ function UploadRecords(props: any) {
         records, deletes, filename,
         uploadDone,
         onUploadCompleted,
+        dispatch
     } = props
-    console.log('records', records)
     const valid_records = Object.values(records).filter((d: any) => !d.errors && !deletes[d.localId])
     const delete_records = Object.values(deletes).filter((d: any) => d.dbId)
     const onFileFetch = (file: any) => {
         setState({file, step: Math.min(1)})
     };
-    console.log('validRecords', valid_records)
-    console.log('rerendered', state, props)
     return (
         <div>
             <div className={Classes.DIALOG_HEADER}>
@@ -134,12 +133,14 @@ function UploadRecords(props: any) {
                 {!uploadDone ? (
                     <>
                         {step >= 0 ? (
-                            <FetchFile filename={filename} file={file} onFetch={onFileFetch}/>
+                            <FetchFile filename={filename} file={file} dispatch={dispatch} onFetch={onFileFetch}/>
                         ) : ""}
                         {step >= 1 ? (
                             <BatchUpload filename={filename} file={file} records={valid_records}
                                          deletes={delete_records}
-                                         onComplete={onUploadCompleted}/>
+                                         onComplete={onUploadCompleted}
+                                         dispatch={dispatch}
+                            />
                         ) : ""}
                     </>
                 ) : (

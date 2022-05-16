@@ -15,7 +15,7 @@ function mapStateToProps(state: any, ownProps: any) {
 
 const DeleteButton = (props: any) => {
     const {file, id, dbId, deleted, dispatch} = props;
-    console.log(props)
+
     const dispatchDelete = () => {
         dispatch(deleteRow({file, id, dbId}))
     }

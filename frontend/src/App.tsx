@@ -9,6 +9,8 @@ import {useDispatch} from "react-redux";
 import UploadedFiles from "./components/UploadedFiles";
 import {openDialog, setFilesState} from "./store/uploadsReducer";
 import API from "./api/client";
+import {sendToast} from "./store/toastReducer";
+import {SERVER_ERROR} from "./utils";
 
 
 export function App() {
@@ -25,7 +27,8 @@ export function App() {
                         dispatch(openDialog({}))
                         API.getFiles(1000, 0).then((filesMeta: any) => {
                             dispatch(setFilesState({filesMeta}))
-                            console.log('filesMeta', filesMeta)
+                        }).catch(err => {
+                            dispatch(sendToast(SERVER_ERROR));
                         })
                     }} icon="document-share" text="Uploaded Files"/>
                     <UploadedFiles/>

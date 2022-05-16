@@ -35,7 +35,7 @@ const INITIAL_STATE: IState = {
 function FileToolbar(props: any) {
     const {updates, errors, deletes, filename, dispatch} = props
     const [state, setState] = useState(INITIAL_STATE)
-    console.log('toolbarstate', state)
+
     const {dialogIsOpen, awaitingUpload, initialStep, updatedRecords} = state;
     const openDialog = function () {
         setState({...state, dialogIsOpen: true, awaitingUpload: true})
@@ -52,10 +52,9 @@ function FileToolbar(props: any) {
     }
 
     let uploadCompleted = (records: any[]) => {
-        console.log('uploadComplete', records)
         setState({...state, awaitingUpload: false, updatedRecords: records, initialStep: 1})
     }
-    console.log('rendered FileToolbar')
+
     return (
         <div>
             {/* TODO: filters*/}

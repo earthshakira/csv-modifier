@@ -24,7 +24,6 @@ const boxStyle = {
 
 function UploadConfirmation(props: any) {
     const {records, filename, deletes, closeModal, dispatch} = props
-    console.log(props)
     const valid_records = Object.values(records).filter((d: any) => !d.errors && !deletes[d.localId]).length
     const deleteCount = Object.values(deletes).filter((d: any) => d.dbId).length
     const errors = Object.values(records).filter((d: any) => d.errors && !deletes[d.localId]).length

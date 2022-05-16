@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 let BASE_URL = 'http://localhost:8000/api';
-console.log(process.env)
+
 if (process.env.NODE_ENV == 'production')
     BASE_URL = '/api'
 const BATCH_SIZE = 100;
@@ -75,7 +75,7 @@ async function uploadBatch(updates: any, deletes: any = []) {
 }
 
 async function uploadRecords(file: any, records: any, onProgress: (progress: number) => Promise<void>) {
-    console.log(records)
+
     let updates = records.map((record: any) => Object.assign({...record}, {file: file.id}))
     updates.forEach((update: any) => {
         if (update.dbId) {
@@ -83,20 +83,18 @@ async function uploadRecords(file: any, records: any, onProgress: (progress: num
             delete update.dbId;
         }
     })
-    console.log('updates', updates)
     let itr = 0;
     let dbUpdates: any[] = [];
     while (itr < updates.length) {
         const currentBatch = updates.slice(itr, itr + BATCH_SIZE);
         let response = await uploadBatch(currentBatch)
-        console.log('resp', response)
+
         dbUpdates = dbUpdates.concat(response.updates)
         response.updates.forEach((update: any, i: number) => {
             update.dbId = update.id
             update.localId = currentBatch[i].localId
         })
         itr += BATCH_SIZE
-        console.log('loop', itr, updates.length)
         await onProgress(Math.min(itr, updates.length))
     }
     return {
@@ -113,20 +111,18 @@ async function deleteRecords(file: any, records: any, onProgress: (progress: num
             delete deleteRec.dbId;
         }
     })
-    console.log('deletes', deletes)
+
     let itr = 0;
     let dbUpdates: any[] = [];
     while (itr < deletes.length) {
         const currentBatch = deletes.slice(itr, itr + BATCH_SIZE);
         let response = await uploadBatch([], currentBatch)
-        console.log('resp', response)
         dbUpdates = dbUpdates.concat(response.deletes)
         response.deletes.forEach((update: any, i: number) => {
             update.dbId = update.id
             update.localId = currentBatch[i].localId
         })
         itr += BATCH_SIZE
-        console.log('loop', itr, deletes.length)
         await onProgress(Math.min(itr, deletes.length))
     }
     return {

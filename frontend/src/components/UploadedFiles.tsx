@@ -61,7 +61,6 @@ function UploadedFiles(props: any) {
                 timeout: 2000,
             }, key);
         }).then((data: any[]) => {
-            console.log('data', data, file)
             const fileData = transformData(data, file);
             dispatch(addFile({data: fileData, filename: file.name}))
         })

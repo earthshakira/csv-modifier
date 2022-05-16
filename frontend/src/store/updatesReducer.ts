@@ -105,7 +105,6 @@ const slice = createSlice({
     } as UpdatedFilesState,
     reducers: {
         registerUpdate: (state, action) => {
-            console.log('update started')
             const {file, id, update, initial, dbId} = action.payload as FileUpdate;
             const fieldId = createFieldId(file, id, update.field)
             if (!state.updateRecords[file]) {
@@ -131,7 +130,6 @@ const slice = createSlice({
                 delete state.errors[fieldId]
                 state.errorStats[file] -= 1;
                 state.updateRecords[file][id].errors -= 1
-                console.log('err reduced for', file, id)
                 if (state.errorStats[file] == 0) {
                     delete state.errorStats[file];
                 }
@@ -139,7 +137,6 @@ const slice = createSlice({
             if (!hadError && hasError) {
                 state.errorStats[file] = (state.errorStats[file] || 0) + 1
                 state.updateRecords[file][id].errors += 1
-                console.log('err increased for', file, id)
             }
             if (update.value === initial.value) {
                 state.updateStats[file] -= 1
@@ -155,9 +152,7 @@ const slice = createSlice({
                     updateRecord = state.updateRecords[file][id] = {file, localId: id, errors: 0, dbId}
                 }
                 updateRecord[update.field] = update.value
-                console.log(updateRecord)
             }
-            console.log('update ended')
         },
         registerError: (state, action) => {
             const {file, id, error} = action.payload as ErrorUpdate;
@@ -182,7 +177,6 @@ const slice = createSlice({
                     }
                 })
             })
-            console.log('updateState', state)
         },
         deleteRow: (state, action) => {
             const {file, id, dbId} = action.payload
@@ -231,7 +225,6 @@ const slice = createSlice({
             delete updateRecords[file];
         },
         initializeUpdates: (state, action) => {
-            console.log('update init started')
             const {data, filename: file} = action.payload
             if (!state.updateRecords[file])
                 state.updateRecords[file] = {}
@@ -256,11 +249,9 @@ const slice = createSlice({
                     errors: countErrors(person),
                     localId: person.id
                 }
-                console.log(person, countErrors(person))
             })
             if (!state.updateStats[file])
                 delete state.updateStats[file]
-            console.log('update init complete')
         }
     },
 })

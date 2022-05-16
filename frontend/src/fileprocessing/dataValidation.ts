@@ -81,7 +81,6 @@ const isValidName = (str: any) => {
     if (typeof str !== 'string') {
         return false;
     }
-    console.log(str, str.match(alphaRegex))
     return !!str.match(alphaRegex)
 
 }

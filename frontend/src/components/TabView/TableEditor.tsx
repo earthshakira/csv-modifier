@@ -52,7 +52,7 @@ const mapStateToProps = (state: any, ownProps: OwnProps) => ({
 })
 
 const TableEditor = (props: TableEditorProps) => {
-    console.log('table editor', props.file)
+
     const columns = [
         {
             name: 'Name',

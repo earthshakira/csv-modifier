@@ -1,5 +1,6 @@
 import {FieldStatus} from "./fileprocessing/constants";
 import {createDeleteMapper, createErrorStateMapper, createUpdateMapper} from "./store/updatesReducer";
+import {Intent} from "@blueprintjs/core";
 
 export const makeCopy = (s: any) => {
     if (s !== null && s !== undefined)
@@ -41,4 +42,10 @@ export const buildStatePropMapper = (colName: string) => {
             deleted: createDeleteMapper(state.updatesReducer, ownProps.file, ownProps.id)
         }
     }
+}
+
+export const SERVER_ERROR = {
+    message: "Error fetching file from server, Please try refreshing your browser",
+    intent: Intent.DANGER,
+    icon: 'error'
 }
