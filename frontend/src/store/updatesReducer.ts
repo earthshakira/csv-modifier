@@ -163,7 +163,7 @@ const slice = createSlice({
             state.errors[fieldId] = error.status;
         },
         clearUpdates: (state, action) => {
-            const {updatedRecords: {updates, deletes}, filename: file} = action.payload;
+            const {updatedRecords: {updates, deletes}, filename: file, fileClose} = action.payload;
             updates.forEach((person: UpdateRequest) => {
                 delete state.updateRecords[file][person.localId]
                 Object.values(columnNames).forEach((colname: string) => {
@@ -177,6 +177,12 @@ const slice = createSlice({
                     }
                 })
             })
+            if (fileClose) {
+                delete state.updates[file];
+                delete state.updateRecords[file];
+                delete state.updateStats[file];
+                delete state.errorStats[file];
+            }
         },
         deleteRow: (state, action) => {
             const {file, id, dbId} = action.payload
@@ -204,7 +210,7 @@ const slice = createSlice({
         },
         clearDeletes: (state, action) => {
             const {filename: file} = action.payload
-            const {deleted, deletedStats, deleteRecords} = state;
+            const {deleted, deletedStats, deleteRecords, updateRecords} = state;
             Object.keys(deleteRecords[file] || {}).forEach((localId: string) => {
                 const recordId = createRecordId(file, localId);
                 delete deleted[recordId]
