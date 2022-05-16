@@ -2,7 +2,7 @@ import {createSlice} from '@reduxjs/toolkit'
 import {Intent} from "@blueprintjs/core";
 
 export const slice = createSlice({
-    name: 'files',
+    name: 'toasts',
     initialState: {
         message: '' as string,
         icon: '' as string,

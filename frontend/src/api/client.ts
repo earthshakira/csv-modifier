@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8000/api';
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 1;
 
 const api = axios.create({
     baseURL: BASE_URL,
@@ -15,6 +15,37 @@ async function fetchFile(filename: string) {
         }
     })
     return response.data.results[0]
+}
+
+async function batchDownload(file: any, onProgress: (progress: number, total: number) => Promise<void>) {
+    let hasNext = true, offset = 0;
+    let fileRows = [] as any[];
+    while (hasNext) {
+        const response = await api.get('/rows/', {
+            params: {
+                file: file.id,
+                limit: BATCH_SIZE,
+                offset,
+            }
+        })
+        const {data} = response
+        fileRows = fileRows.concat(data.results)
+        offset += data.results.length
+        hasNext = data.next;
+        await onProgress(offset, data.count);
+    }
+    return fileRows;
+}
+
+async function getFiles(limit: number, offset: number) {
+    const response = await api.get('/files/', {
+        params: {
+            format: 'json',
+            limit,
+            offset
+        }
+    })
+    return response.data
 }
 
 async function createFile(filename: string) {
@@ -104,7 +135,9 @@ const API = {
     fetchFile,
     createIfNotExists,
     uploadRecords,
-    deleteRecords
+    deleteRecords,
+    getFiles,
+    batchDownload
 }
 
 export default API
