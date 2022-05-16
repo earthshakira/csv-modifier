@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "## Choices",
   "main": "startup.sh",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run relocate"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://earthshakira: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@github.com/earthshakira/csv-modifier.git"
