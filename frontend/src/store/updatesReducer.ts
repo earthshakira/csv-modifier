@@ -209,7 +209,7 @@ const slice = createSlice({
             }
         },
         clearDeletes: (state, action) => {
-            const {filename: file} = action.payload
+            const {filename: file,closeFile} = action.payload
             const {deleted, deletedStats, deleteRecords, updateRecords} = state;
             Object.keys(deleteRecords[file] || {}).forEach((localId: string) => {
                 const recordId = createRecordId(file, localId);
@@ -217,6 +217,8 @@ const slice = createSlice({
             })
             delete deletedStats[file];
             delete deleteRecords[file];
+            if (closeFile)
+                delete state.errorStats[file];
         },
         discardUpdates: (state, action) => {
             const {filename: file} = action.payload

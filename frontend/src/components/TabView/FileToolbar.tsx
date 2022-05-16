@@ -45,9 +45,9 @@ function FileToolbar(props: any) {
     }
 
     const handleClose = function () {
-        dispatch(clearUpdates({filename, updatedRecords}))
-        dispatch(clearDeletes({filename}))
-        dispatch(updateFile({filename, updatedRecords, fileClose: true}))
+        dispatch(clearUpdates({filename, updatedRecords, fileClose: true}))
+        dispatch(clearDeletes({filename, fileClose: true}))
+        dispatch(updateFile({filename, updatedRecords}))
         setState(INITIAL_STATE)
     }
 
