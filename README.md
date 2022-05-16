@@ -1,6 +1,7 @@
 # EDM: Employee Data Modifier
 
-[Live Link](https://csv-update-pipeline.herokuapp.com/) [Dummy Data](https://github.com/earthshakira/csv-modifier/tree/main/dummy_data)
+- [Live Link](https://csv-update-pipeline.herokuapp.com/) 
+- [Dummy Data](https://github.com/earthshakira/csv-modifier/tree/main/dummy_data)
 
 ## Features
 
@@ -53,6 +54,8 @@ Using a more active communication like websockets and a debouncing logic to add 
 Have concurrency control when multiple people start editing the same file.
 
 #### 3. Smooth UI/UX
-There are some states with poor error management and can be improved to give the user a more smooth and effortless experience. 
+There are some states with poor error management and can be improved to give the user a more smooth and effortless experience.
+
+
 
 
