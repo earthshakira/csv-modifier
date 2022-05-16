@@ -13,7 +13,7 @@ A tab based view gives you the option to open multiple files, freshly added or p
 
 ### 2. Update Summary
 
-On the bottom right you the view of what's going on in your files and how many changes are pending upload.
+On the bottom right you get the view of what's going on in your files and how many changes are pending upload.
 
 ### 3. Tooltips and Hints
 
