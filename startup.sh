@@ -1,3 +1,7 @@
-python3 mange.py makemigrations
-python3 mange.py migrate
-gunicorn nameOfProject.wsgi --log-file -
+python3 manage.py makemigrations
+python3 manage.py migrate
+cd frontend
+npm install
+npm run relocate
+cd ../
+gunicorn core.wsgi --log-file -
