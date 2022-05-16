@@ -1,6 +1,8 @@
 import {connect} from "react-redux";
 import {Button, Card, Classes, H4, Icon, Intent} from "@blueprintjs/core";
 import {adj, plural} from "../../utils";
+import {sendToast} from "../../store/toastReducer";
+import {useEffect} from "react";
 
 function mapStateToProps(state: any, ownProps: any) {
     let {updatesReducer: {updateRecords, deleteRecords}} = state;
@@ -21,11 +23,23 @@ const boxStyle = {
 } as any;
 
 function UploadConfirmation(props: any) {
-    const {records, filename, deletes, closeModal} = props
+    const {records, filename, deletes, closeModal, dispatch} = props
     console.log(props)
     const valid_records = Object.values(records).filter((d: any) => !d.errors && !deletes[d.localId]).length
     const deleteCount = Object.values(deletes).filter((d: any) => d.dbId).length
     const errors = Object.values(records).filter((d: any) => d.errors && !deletes[d.localId]).length
+
+    useEffect(() => {
+        if (!valid_records || !deleteCount) {
+            closeModal();
+            dispatch(sendToast({
+                message: "Looks like you have no valid changes that can be uploaded",
+                intent: Intent.WARNING,
+                icon: 'warning-sign'
+            }))
+        }
+    }, [])
+
     return (
         <div>
             <div className={Classes.DIALOG_HEADER}>

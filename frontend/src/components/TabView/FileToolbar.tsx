@@ -43,6 +43,7 @@ function FileToolbar(props: any) {
     const closeModal = () => {
         setState({...state, dialogIsOpen: false, awaitingUpload: false})
     }
+
     const handleClose = function () {
         dispatch(clearUpdates({filename, updatedRecords}))
         dispatch(clearDeletes({filename}))
