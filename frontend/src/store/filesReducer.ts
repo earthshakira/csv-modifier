@@ -11,7 +11,7 @@ export type UploadedFilesState = {
         [filename: string]: UploadedFile
     },
     fileNames: string[],
-    lastAddedFile: string,
+    activeFile: string,
 }
 
 export const slice = createSlice({
@@ -19,7 +19,7 @@ export const slice = createSlice({
     initialState: {
         files: {},
         fileNames: [],
-        lastAddedFile: '',
+        activeFile: '',
     } as UploadedFilesState,
     reducers: {
         addFile: (state, action) => {
@@ -27,7 +27,7 @@ export const slice = createSlice({
             if (!(filename in state.files)) {
                 state.fileNames.push(filename)
             }
-            state.lastAddedFile = filename
+            state.activeFile = filename
             console.log(data)
             state.files[filename] = {
                 filename,
@@ -36,7 +36,7 @@ export const slice = createSlice({
         },
         setActiveFile: (state, action) => {
             const {filename} = action.payload;
-            state.lastAddedFile = filename
+            state.activeFile = filename
         },
         updateFile: (state, action) => {
             const {filename, updatedRecords: {updates, deletes}} = action.payload;
@@ -51,7 +51,7 @@ export const slice = createSlice({
             console.log('shubham', updateMap, deletes)
             state.files[filename].data = state.files[filename].data.filter((person: any) => {
                 const update = updateMap[person.id];
-                if(update) {
+                if (update) {
                     person.dbId = update.dbId;
                     COLUMNS.forEach((col: string) => {
                         if (update[col]) {
@@ -64,9 +64,22 @@ export const slice = createSlice({
                 return !deleteMap[person.id];
             })
         },
+        removeFile: (state, action) => {
+            const {filename} = action.payload
+            const {files, fileNames} = state;
+            delete state.files[filename];
+            let index = fileNames.indexOf(filename);
+            if (index > -1) {
+                fileNames.splice(index, 1)
+                if (index >= fileNames.length) {
+                    index -= 1;
+                }
+                state.activeFile = fileNames[index] || '';
+            }
+        }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const {addFile, setActiveFile, updateFile} = slice.actions
+export const {addFile, setActiveFile, updateFile, removeFile} = slice.actions
 export const filesReducer = slice.reducer;

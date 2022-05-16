@@ -2,6 +2,8 @@ import {Button, Classes, Intent} from "@blueprintjs/core";
 import {connect} from "react-redux";
 import {Tooltip2} from "@blueprintjs/popover2";
 import {plural} from "../../utils";
+import {removeFile} from "../../store/filesReducer";
+import {discardUpdates} from "../../store/updatesReducer";
 
 
 function mapStateToProps(state: any, ownProps: any) {
@@ -14,7 +16,7 @@ function mapStateToProps(state: any, ownProps: any) {
 }
 
 function TabTitle(props: any) {
-    let {updates, errors, filename} = props;
+    let {updates, errors, filename, dispatch} = props;
     let icon: any = 'th';
     let intent: Intent = Intent.NONE
     let message: string = ''
@@ -30,6 +32,10 @@ function TabTitle(props: any) {
     }
 
     const buttonClass = `${Classes.MINIMAL} no-focus`
+    const closeTab = () => {
+        dispatch(removeFile({filename}))
+        dispatch(discardUpdates({filename}))
+    };
     return (
         <div>
             {message ? (
@@ -42,7 +48,7 @@ function TabTitle(props: any) {
             ) : (
                 <Button className={buttonClass} intent={intent} icon={icon} text={filename}/>
             )}
-            <Button className={buttonClass} intent={Intent.DANGER} icon={'cross'}/>
+            <Button className={buttonClass} intent={Intent.DANGER} icon={'cross'} onClick={closeTab}/>
         </div>
     )
 }

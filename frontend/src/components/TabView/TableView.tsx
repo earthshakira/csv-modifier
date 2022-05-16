@@ -9,7 +9,7 @@ import TabTitle from "./TabTitle";
 const mapStateToProps = function (state: any) {
     return {
         files: state.csvReducer.fileNames,
-        activeFile: state.csvReducer.lastAddedFile
+        activeFile: state.csvReducer.activeFile
     }
 }
 
@@ -23,8 +23,8 @@ type TableViewProps = {
 function TableView(props: TableViewProps) {
 
     const handleTabChange = (activeTabId: TabId) => props.dispatch(setActiveFile({filename: activeTabId}));
+    console.log('rerendered tableView')
     return (
-
         <Card interactive={true} elevation={Elevation.TWO}>
             <Tabs
                 animate={true}

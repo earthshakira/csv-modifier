@@ -1,6 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit'
 import {isFieldValid} from "../fileprocessing/dataValidation";
-import {columnNames, FieldStatus, Person} from "../fileprocessing/constants";
+import {columnNames, COLUMNS, FieldStatus, Person} from "../fileprocessing/constants";
 
 type BaseUpdate = {
     file: string,
@@ -43,16 +43,16 @@ export type UpdatedFilesState = {
     updateStats: {
         [key: string]: number
     },
+    updateRecords: {
+        [file: string]: {
+            [id: string]: UpdateRequest
+        }
+    },
     errors: {
         [key: string]: any
     },
     errorStats: {
         [key: string]: number
-    },
-    updateRecords: {
-        [file: string]: {
-            [id: string]: UpdateRequest
-        }
     },
     deleteRecords: {
         [file: string]: {
@@ -207,6 +207,18 @@ const slice = createSlice({
             delete deletedStats[file];
             delete deleteRecords[file];
         },
+        discardUpdates: (state, action) => {
+            const {filename: file} = action.payload
+            const {updateStats, updates, updateRecords} = state;
+            Object.values(updateRecords[file]).forEach(person => {
+                COLUMNS.forEach((col: string) => {
+                    let fieldId = createFieldId(file, person.localId, col)
+                    delete updates[fieldId]
+                })
+            })
+            delete updateStats[file];
+            delete updateRecords[file];
+        },
         initializeUpdates: (state, action) => {
             console.log('update init started')
             const {data, filename: file} = action.payload
@@ -260,6 +272,7 @@ export const {
     registerError,
     restoreRow,
     deleteRow,
-    clearDeletes
+    clearDeletes,
+    discardUpdates
 } = slice.actions
 export const updatesReducer = slice.reducer;
