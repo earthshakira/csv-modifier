@@ -112,7 +112,13 @@ const slice = createSlice({
                 state.updateRecords[file] = {}
             }
             if (!state.updateRecords[file][id]) {
-                state.updateRecords[file][id] = {file: file, localId: id, errors: 0, [update.field]: update.value};
+                state.updateRecords[file][id] = {
+                    file: file,
+                    dbId,
+                    localId: id,
+                    errors: 0,
+                    [update.field]: update.value
+                };
             }
 
             if (state.updates[fieldId] == null && initial.value != null) {

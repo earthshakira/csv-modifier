@@ -33,7 +33,7 @@ function UploadConfirmation(props: any) {
         if (!valid_records && !deleteCount) {
             closeModal();
             dispatch(sendToast({
-                message: "Looks like you have no valid changes that can be uploaded",
+                message: "Looks like you have no valid changes that can be uploaded, ensure all errors are fixed before uploading",
                 intent: Intent.WARNING,
                 icon: 'warning-sign'
             }))
@@ -66,7 +66,7 @@ function UploadConfirmation(props: any) {
                                 <Card>
                                     <Icon intent={Intent.DANGER} icon={'error'} size={30}/>
                                     <br/><br/>
-                                    <p>{`${errors} row${plural(errors)} ${adj(errors)}, won't be uploaded`}</p>
+                                    <p>{`${errors} row${plural(errors)} ${adj(errors)} invalid, won't be uploaded`}</p>
                                 </Card>
                             </div>
                         ) : (
