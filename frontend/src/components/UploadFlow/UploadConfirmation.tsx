@@ -30,7 +30,7 @@ function UploadConfirmation(props: any) {
     const errors = Object.values(records).filter((d: any) => d.errors && !deletes[d.localId]).length
 
     useEffect(() => {
-        if (!valid_records || !deleteCount) {
+        if (!valid_records && !deleteCount) {
             closeModal();
             dispatch(sendToast({
                 message: "Looks like you have no valid changes that can be uploaded",
