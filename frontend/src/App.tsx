@@ -28,7 +28,6 @@ export class App extends React.PureComponent {
                     <div style={{width: "50%", marginLeft: "25%"}}>
                         <CSVReader/>
                     </div>
-                    <NextStepSeparator/>
                     <TableView/>
                 </div>
             </div>
